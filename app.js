@@ -1,4 +1,4 @@
-// ===== AI asistent Bizzmo - totem kviz (1080x1920) =====
+// ===== Bizzmo AI asistent - totem kviz (1080x1920) =====
 // Tok: [setup lokacije, samo prvi put] -> Slajd 1 (podaci) -> Slajd 2 (pitanje)
 //      -> označi točan/netočan -> Zahvala -> nakon 8 s natrag na Slajd 1.
 

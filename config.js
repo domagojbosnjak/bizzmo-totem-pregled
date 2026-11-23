@@ -1,6 +1,6 @@
-// ===== KONFIGURACIJA - AI asistent Bizzmo totem =====
+// ===== KONFIGURACIJA - Bizzmo AI asistent totem =====
 
-// Točan odgovor na pitanje "Što je AI asistent Bizzmo?"
+// Točan odgovor na pitanje "Što je Bizzmo AI asistent?"
 var CORRECT_ANSWER = 'A';
 
 // Tekst točnog odgovora (prikazuje se na zahvali kad netko pogriješi)
