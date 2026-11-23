@@ -67,7 +67,7 @@ setInterval(syncPending, 60000);
 setTimeout(syncPending, 3000);
 
 // ===== LEADERBOARD IZ SUPABASEA =====
-// Tablica se ne može čitati (emailovi), pa se ljestvica dohvaća preko dvije
+// Tablica se ne može čitati (osobni podaci), pa se ljestvica dohvaća preko dvije
 // funkcije u bazi koje vraćaju samo "Ime P." i vrijeme (supabase-schema.sql).
 function rpc(fn, args) {
   if (!navigator.onLine || !SUPABASE_URL) return Promise.reject(new Error('offline'));

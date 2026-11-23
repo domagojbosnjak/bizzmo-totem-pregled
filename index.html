@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Bizzmo AI asistent - Hrvatski Telekom</title>
   <meta name="theme-color" content="#E20074">
-  <link rel="stylesheet" href="style.css?v=2.2">
+  <link rel="stylesheet" href="style.css?v=2.3">
 </head>
 <body>
   <!-- Okomiti Bizzmo explainer preko CIJELOG ekrana (izvan skaliranog appa,
@@ -52,14 +52,19 @@
             <input type="text" id="reg-name" class="reg-input" maxlength="50" autocomplete="off" readonly>
           </div>
           <div class="reg-field">
-            <label class="reg-label" for="reg-email">Email:</label>
-            <input type="email" id="reg-email" class="reg-input" maxlength="80" autocomplete="off" readonly>
-            <p class="reg-error" id="email-error">Provjerite email adresu.</p>
+            <label class="reg-label" for="reg-oib">OIB tvrtke:</label>
+            <input type="text" id="reg-oib" class="reg-input" maxlength="11" inputmode="numeric" autocomplete="off" readonly>
+            <p class="reg-error" id="oib-error">Provjerite OIB (11 znamenki).</p>
+          </div>
+          <div class="reg-field">
+            <label class="reg-label" for="reg-phone">Kontakt broj:</label>
+            <input type="text" id="reg-phone" class="reg-input" maxlength="20" inputmode="tel" autocomplete="off" readonly>
+            <p class="reg-error" id="phone-error">Provjerite kontakt broj.</p>
           </div>
         </div>
         <div class="gdpr-consent" id="gdpr-consent" onclick="toggleGdpr()">
           <div class="gdpr-checkbox" id="gdpr-check"></div>
-          <span class="gdpr-text">Pristajem na prikupljanje i obradu osobnih podataka (ime, prezime i email) u svrhu sudjelovanja u kvizu i informiranja o usluzi Bizzmo AI asistent i ponudama Hrvatskog Telekoma, u skladu s Općom uredbom o zaštiti podataka (GDPR).</span>
+          <span class="gdpr-text">Pristajem na prikupljanje i obradu osobnih podataka (ime i prezime, OIB tvrtke i kontakt broj) u svrhu sudjelovanja u kvizu i informiranja o usluzi Bizzmo AI asistent i ponudama Hrvatskog Telekoma, u skladu s Općom uredbom o zaštiti podataka (GDPR).</span>
         </div>
         <button class="btn-primary" id="btn-reg-next" onclick="submitRegistration()" disabled>Dalje</button>
       </div>
@@ -150,8 +155,8 @@
 
   </div>
 
-  <script src="config.js?v=2.2"></script>
-  <script src="storage.js?v=2.2"></script>
-  <script src="app.js?v=2.2"></script>
+  <script src="config.js?v=2.3"></script>
+  <script src="storage.js?v=2.3"></script>
+  <script src="app.js?v=2.3"></script>
 </body>
 </html>

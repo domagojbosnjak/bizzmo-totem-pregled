@@ -140,7 +140,16 @@ var KEYS_ALPHA = [
   ['shift','Y','X','C','V','B','N','M','backspace'],
   ['123','-','space','.','done']
 ];
-var KEYS_EMAIL_ROW4 = ['123','@','.','-','_','.hr','.com','done'];
+// OIB i kontakt broj: samo brojčana tipkovnica
+var KEYS_DIGITS_OIB = [
+  ['1','2','3','4','5','6','7','8','9','0'],
+  ['backspace','done']
+];
+var KEYS_DIGITS_PHONE = [
+  ['1','2','3','4','5','6','7','8','9','0'],
+  ['+','space','backspace','done']
+];
+function isDigitsInput(input) { return input && (input.id === 'reg-oib' || input.id === 'reg-phone'); }
 var KEYS_NUM = [
   ['1','2','3','4','5','6','7','8','9','0'],
   ['@','.','-','_','+','/','(',')','!','?'],
@@ -162,10 +171,11 @@ function isWordStart(input) {
 
 function buildKeyboard(mode) {
   keyboardMode = mode;
-  var isEmail = activeInput && activeInput.id === 'reg-email';
-  var rows = mode === 'num' ? KEYS_NUM : KEYS_ALPHA.slice(0, 3).concat([isEmail ? KEYS_EMAIL_ROW4 : KEYS_ALPHA[3]]);
+  var isDigits = isDigitsInput(activeInput);
+  var rows = isDigits ? (activeInput.id === 'reg-oib' ? KEYS_DIGITS_OIB : KEYS_DIGITS_PHONE)
+    : mode === 'num' ? KEYS_NUM : KEYS_ALPHA;
   var autoCap = mode === 'alpha' && activeInput && activeInput.id === 'reg-name' && isWordStart(activeInput);
-  var upper = !isEmail && (shiftActive || autoCap || (activeInput && activeInput.id === 'setup-input'));
+  var upper = !isDigits && (shiftActive || autoCap || (activeInput && activeInput.id === 'setup-input'));
 
   rows.forEach(function(row, i) {
     var rowEl = document.getElementById('kb-row-' + (i + 1));
@@ -184,7 +194,7 @@ function buildKeyboard(mode) {
         e.preventDefault();
         btn.classList.add('kb-pressed');
         longPressFired = false;
-        if (!special && !isEmail && DIACRITICS[ch]) {
+        if (!special && !isDigits && DIACRITICS[ch]) {
           longPressTimer = setTimeout(function() { longPressFired = true; showDiacritics(btn, DIACRITICS[ch]); }, 400);
         }
       });
@@ -204,7 +214,8 @@ function buildKeyboard(mode) {
       rowEl.appendChild(btn);
     });
   });
-  document.getElementById('kb-row-4').style.display = '';
+  for (var r = rows.length + 1; r <= 4; r++) document.getElementById('kb-row-' + r).innerHTML = '';
+  document.getElementById('keyboard').classList.toggle('kb-digits', isDigits);
 }
 
 function showDiacritics(btn, variants) {
@@ -243,7 +254,8 @@ function typeKey(key) {
     input.value += key;
   }
   if (input.id === 'reg-name') input.value = autoCapitalizeWords(input.value);
-  if (input.id === 'reg-email') input.value = input.value.toLowerCase().replace(/\s/g, '');
+  if (input.id === 'reg-oib') input.value = input.value.replace(/\D/g, '');
+  if (input.id === 'reg-phone') input.value = input.value.replace(/[^\d+ ]/g, '').replace(/ {2,}/g, ' ').replace(/(.)\+/g, '$1');
   var consumed = shiftActive && key !== 'backspace';
   if (consumed) shiftActive = false;
   if (keyboardMode === 'alpha' && (consumed || input.id === 'reg-name')) buildKeyboard('alpha');
@@ -270,9 +282,11 @@ function hideKeyboard() {
 
 function advanceField() {
   if (activeInput && activeInput.id === 'setup-input') { saveSetupLocation(); return; }
-  if (activeInput && activeInput.id === 'reg-name') { showKeyboard(document.getElementById('reg-email')); return; }
+  if (activeInput && activeInput.id === 'reg-name') { showKeyboard(document.getElementById('reg-oib')); return; }
+  if (activeInput && activeInput.id === 'reg-oib') { validateOib(true); showKeyboard(document.getElementById('reg-phone')); return; }
   hideKeyboard();
-  validateEmail(true);
+  validateOib(true);
+  validatePhone(true);
 }
 
 document.querySelectorAll('.reg-input, .setup-input').forEach(function(input) {
@@ -280,12 +294,30 @@ document.querySelectorAll('.reg-input, .setup-input').forEach(function(input) {
 });
 
 // ===== SLAJD 1: PODACI =====
-var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i;
-
-function validateEmail(showError) {
-  var v = document.getElementById('reg-email').value.trim();
-  var ok = EMAIL_RE.test(v);
-  document.getElementById('email-error').classList.toggle('visible', showError && v.length > 0 && !ok);
+// OIB: 11 znamenki + kontrolna znamenka (ISO 7064, MOD 11,10)
+function isValidOib(v) {
+  if (!/^\d{11}$/.test(v)) return false;
+  var a = 10;
+  for (var i = 0; i < 10; i++) {
+    a = (a + parseInt(v.charAt(i), 10)) % 10;
+    if (a === 0) a = 10;
+    a = (a * 2) % 11;
+  }
+  var k = (11 - a) % 10;
+  return k === parseInt(v.charAt(10), 10);
+}
+function validateOib(showError) {
+  var v = document.getElementById('reg-oib').value.trim();
+  var ok = isValidOib(v);
+  document.getElementById('oib-error').classList.toggle('visible', showError && v.length > 0 && !ok);
+  return ok;
+}
+// Kontakt broj: 8-15 znamenki, smije počinjati s +
+function validatePhone(showError) {
+  var v = document.getElementById('reg-phone').value.trim();
+  var digits = v.replace(/\D/g, '').length;
+  var ok = /^\+?[\d ]+$/.test(v) && digits >= 8 && digits <= 15;
+  document.getElementById('phone-error').classList.toggle('visible', showError && v.length > 0 && !ok);
   return ok;
 }
 
@@ -297,11 +329,14 @@ function toggleGdpr() {
 function updateRegNext() {
   var name = document.getElementById('reg-name').value.trim();
   var gdpr = document.getElementById('gdpr-check').classList.contains('checked');
-  document.getElementById('btn-reg-next').disabled = !(name.length >= 2 && validateEmail(false) && gdpr);
-  if (validateEmail(false)) document.getElementById('email-error').classList.remove('visible');
+  var oibOk = validateOib(false), phoneOk = validatePhone(false);
+  document.getElementById('btn-reg-next').disabled = !(name.length >= 2 && oibOk && phoneOk && gdpr);
+  if (oibOk) document.getElementById('oib-error').classList.remove('visible');
+  if (phoneOk) document.getElementById('phone-error').classList.remove('visible');
 }
 document.getElementById('reg-name').addEventListener('input', updateRegNext);
-document.getElementById('reg-email').addEventListener('input', updateRegNext);
+document.getElementById('reg-oib').addEventListener('input', updateRegNext);
+document.getElementById('reg-phone').addEventListener('input', updateRegNext);
 
 function submitRegistration() {
   if (document.getElementById('btn-reg-next').disabled) return;
@@ -345,7 +380,8 @@ function confirmAnswer(tappedTimeMs) {
 
   var entry = {
     name: document.getElementById('reg-name').value.trim(),
-    email: document.getElementById('reg-email').value.trim(),
+    oib: document.getElementById('reg-oib').value.trim(),
+    phone: document.getElementById('reg-phone').value.trim(),
     answer: selectedAnswer,
     is_correct: correct,
     time_ms: timeMs,
@@ -468,8 +504,10 @@ function goToStart() {
   selectedAnswer = '';
   answerLocked = false;
   document.getElementById('reg-name').value = '';
-  document.getElementById('reg-email').value = '';
-  document.getElementById('email-error').classList.remove('visible');
+  document.getElementById('reg-oib').value = '';
+  document.getElementById('reg-phone').value = '';
+  document.getElementById('oib-error').classList.remove('visible');
+  document.getElementById('phone-error').classList.remove('visible');
   document.getElementById('gdpr-check').classList.remove('checked');
   document.getElementById('btn-reg-next').disabled = true;
   document.getElementById('btn-answer').disabled = true;
@@ -481,7 +519,8 @@ function goToStart() {
 // ===== NEAKTIVNOST (30 s) =====
 var inactivityTimer = null;
 function registrationTouched() {
-  return document.getElementById('reg-name').value || document.getElementById('reg-email').value ||
+  return document.getElementById('reg-name').value || document.getElementById('reg-oib').value ||
+    document.getElementById('reg-phone').value ||
     document.getElementById('gdpr-check').classList.contains('checked');
 }
 function startInactivityTimer() {

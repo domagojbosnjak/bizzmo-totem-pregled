@@ -491,6 +491,9 @@ html.tap-hint-off .tap-hint { display: none; }
 .kb-shift.active { background: var(--white); color: var(--black); }
 .kb-done { background: var(--magenta); flex: 1.6; max-width: 160px; font-size: 30px; font-weight: 800; }
 .kb-domain { background: #48484A; flex: 1.4; max-width: 140px; font-size: 30px; }
+/* brojčana tipkovnica (OIB, kontakt broj): veće tipke */
+.kb-digits .kb-key { height: 112px; font-size: 44px; }
+.kb-digits .kb-space, .kb-digits .kb-backspace, .kb-digits .kb-done { font-size: 30px; }
 
 .kb-diacritic-popup {
   position: absolute;
