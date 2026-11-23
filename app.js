@@ -3,7 +3,7 @@
 //      -> označi točan/netočan -> Zahvala -> nakon 8 s natrag na Slajd 1.
 
 var DEVICE_LOCATION = '';
-try { DEVICE_LOCATION = localStorage.getItem('bizzmo_location') || ''; } catch (e) {}
+try { DEVICE_LOCATION = localStorage.getItem('bizzmo_location') || 'PREGLED'; } catch (e) {}
 // Installer predaje lokaciju u linku (index.html?lokacija=ZAGREB) - ima
 // prednost pred spremljenom, pa ponovni INSTALL.bat mijenja lokaciju.
 (function() {
