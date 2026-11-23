@@ -16,12 +16,27 @@ try { DEVICE_LOCATION = localStorage.getItem('bizzmo_location') || 'PREGLED'; } 
 })();
 
 // ===== CANVAS: fiksni dizajn 1080x1920, skaliran u stvarni ekran =====
+// FRAME_MODE (config.js): pregled na računalu/mobitelu - totem se prikazuje
+// kao uspravni 9:16 ekran na tamnoj pozadini, a video je točno u tom okviru
+// (cijeli, neobrezan). Na totemu je false: video prekriva cijeli ekran.
+var FRAME = typeof FRAME_MODE !== 'undefined' && FRAME_MODE;
+if (FRAME) document.documentElement.classList.add('frame-mode');
+
 function fitCanvas() {
   var vw = window.innerWidth, vh = window.innerHeight;
   var scale = Math.min(vw / 1080, vh / 1920);
+  var x = (vw - 1080 * scale) / 2, y = (vh - 1920 * scale) / 2;
   var app = document.getElementById('app');
-  app.style.transform = 'translate(' + (vw - 1080 * scale) / 2 + 'px,' + (vh - 1920 * scale) / 2 + 'px) scale(' + scale + ')';
+  app.style.transform = 'translate(' + x + 'px,' + y + 'px) scale(' + scale + ')';
   app._scale = scale;
+  if (FRAME) {
+    var layer = document.getElementById('attract-layer');
+    layer.style.left = x + 'px';
+    layer.style.top = y + 'px';
+    layer.style.width = (1080 * scale) + 'px';
+    layer.style.height = (1920 * scale) + 'px';
+    document.documentElement.style.setProperty('--frame-radius', Math.round(40 * scale) + 'px');
+  }
 }
 fitCanvas();
 window.addEventListener('resize', fitCanvas);

@@ -8,6 +8,7 @@ var CORRECT_ANSWER_TEXT = 'Digitalna platforma za upravljanje bazom klijenata, r
 
 // Timeri (ms)
 var INACTIVITY_MS = 30000;      // neaktivnost na slajdu 1 / 2 -> povratak na početak
+var FRAME_MODE = true;          // true = pregled kao totem 9:16 na tamnoj pozadini (javni link); totem = false
 var ONE_TAP_ANSWER = true;      // true = dodir na odgovor odmah odgovara (bez POTVRDI)
 var FEEDBACK_MS = 1000;        // koliko dugo se vidi označen točan/netočan odgovor
 var LEADERBOARD_MS = 12000;     // zadnji slajd (rezultat + ljestvica) -> video

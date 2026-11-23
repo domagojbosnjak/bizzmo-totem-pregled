@@ -305,6 +305,17 @@ html, body {
   cursor: pointer;
 }
 body.attract-on #attract-layer { display: block; }
+/* Pregled (FRAME_MODE): totem kao uspravni ekran na tamnoj pozadini */
+html.frame-mode, html.frame-mode body { background: #121212; }
+html.frame-mode #app {
+  border-radius: 40px;           /* skalira se zajedno s appom */
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.08), 0 40px 120px rgba(0,0,0,0.7);
+}
+html.frame-mode #attract-layer {
+  inset: auto;                   /* položaj i veličinu postavlja fitCanvas() */
+  border-radius: var(--frame-radius, 20px);
+  overflow: hidden;
+}
 #attract-video {
   width: 100%;
   height: 100%;
