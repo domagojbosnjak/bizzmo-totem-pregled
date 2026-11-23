@@ -13,7 +13,7 @@ var FRAME_MODE = true;          // true = pregled kao totem 9:16 na tamnoj pozad
 var ONE_TAP_ANSWER = true;      // true = dodir na odgovor odmah odgovara (bez POTVRDI)
 var FEEDBACK_MS = 1000;        // koliko dugo se vidi označen točan/netočan odgovor
 var LEADERBOARD_MS = 12000;     // zadnji slajd (rezultat + ljestvica) -> video
-var LEADERBOARD_SIZE = 5;       // koliko najbržih točnih se prikazuje
+var LEADERBOARD_SIZE = 3;       // koliko najbržih točnih se prikazuje
 var LEADERBOARD_SCOPE = 'all';  // 'all' = svi totemi zajedno, 'location' = samo ovaj totem
 // Admin -> "Poredak danas": puna imena svih igrača dana iz baze (svi totemi).
 // PIN mora biti isti kao u Supabase tablici bizzmo_admin.
