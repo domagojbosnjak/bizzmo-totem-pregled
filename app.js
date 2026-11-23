@@ -294,17 +294,9 @@ document.querySelectorAll('.reg-input, .setup-input').forEach(function(input) {
 });
 
 // ===== SLAJD 1: PODACI =====
-// OIB: 11 znamenki + kontrolna znamenka (ISO 7064, MOD 11,10)
+// OIB: točno 11 znamenki (kontrolna znamenka se namjerno NE provjerava)
 function isValidOib(v) {
-  if (!/^\d{11}$/.test(v)) return false;
-  var a = 10;
-  for (var i = 0; i < 10; i++) {
-    a = (a + parseInt(v.charAt(i), 10)) % 10;
-    if (a === 0) a = 10;
-    a = (a * 2) % 11;
-  }
-  var k = (11 - a) % 10;
-  return k === parseInt(v.charAt(10), 10);
+  return /^\d{11}$/.test(v);
 }
 function validateOib(showError) {
   var v = document.getElementById('reg-oib').value.trim();
