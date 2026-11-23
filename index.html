@@ -6,9 +6,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>AI asistent Bizzmo - Hrvatski Telekom</title>
   <meta name="theme-color" content="#E20074">
-  <link rel="stylesheet" href="style.css?v=1.3">
+  <link rel="stylesheet" href="style.css?v=1.3.1">
 </head>
 <body>
+  <!-- Okomiti Bizzmo explainer preko CIJELOG ekrana (izvan skaliranog appa,
+       pa nema traka sa strane ni kad ekran nije točno 9:16). Dodir = kviz. -->
+  <div id="attract-layer" onclick="startFromAttract()">
+    <video id="attract-video" src="video/bizzmo-explainer.mp4" muted loop playsinline preload="auto"></video>
+  </div>
   <div id="app">
 
     <!-- SETUP (samo kod prvog pokretanja: naziv lokacije totema) -->
@@ -24,11 +29,8 @@
     <img src="ht-logo-white.svg" alt="T" class="t-logo" id="t-logo">
 
     <!-- MIROVANJE - video se vrti dok nitko ne igra, dodir pokreće kviz -->
-    <div id="screen-attract" class="screen" onclick="startFromAttract()">
-      <!-- Okomiti Bizzmo explainer (1080x1920) preko cijelog ekrana, u petlji.
-           Dodir bilo gdje pokreće kviz. -->
-      <video id="attract-video" class="attract-fullscreen" src="video/bizzmo-explainer.mp4" muted loop playsinline preload="auto"></video>
-    </div>
+    <!-- MIROVANJE: prazan ekran u appu; sam video je izvan appa (vidi #attract-layer) -->
+    <div id="screen-attract" class="screen"></div>
 
     <!-- SLAJD 1 - PODACI -->
     <div id="screen-registration" class="screen">
@@ -141,8 +143,8 @@
 
   </div>
 
-  <script src="config.js?v=1.3"></script>
-  <script src="storage.js?v=1.3"></script>
-  <script src="app.js?v=1.3"></script>
+  <script src="config.js?v=1.3.1"></script>
+  <script src="storage.js?v=1.3.1"></script>
+  <script src="app.js?v=1.3.1"></script>
 </body>
 </html>

@@ -293,11 +293,19 @@ html, body {
 .question-content .btn-primary { align-self: flex-end; }
 
 /* ===== MIROVANJE: VIDEO PREKO CIJELOG EKRANA =====
-   Okomiti video 1080x1920 = točno veličina totema, pa ga ništa ne reže. */
-#screen-attract { cursor: pointer; background: #000; }
-.attract-fullscreen {
-  position: absolute;
+   Sloj je izvan skaliranog #app, prekriva cijeli prozor (object-fit: cover).
+   Na totemu 1080x1920 video je točno ekran; na drugim omjerima se minimalno
+   obreže umjesto da ostanu trake. */
+#attract-layer {
+  position: fixed;
   inset: 0;
+  z-index: 50;
+  display: none;
+  background: #000;
+  cursor: pointer;
+}
+body.attract-on #attract-layer { display: block; }
+#attract-video {
   width: 100%;
   height: 100%;
   object-fit: cover;

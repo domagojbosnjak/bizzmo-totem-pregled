@@ -33,6 +33,7 @@ function showScreen(id) {
   void el.offsetWidth;
   el.classList.add('active');
   document.getElementById('t-logo').classList.toggle('t-logo-hidden', id === 'screen-setup' || id === 'screen-attract');
+  document.body.classList.toggle('attract-on', id === 'screen-attract');
 
   // Video se vrti samo na ekranu mirovanja (štedi slabi totem), uvijek od početka
   var video = document.getElementById('attract-video');
