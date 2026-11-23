@@ -19,11 +19,23 @@ try { DEVICE_LOCATION = localStorage.getItem('bizzmo_location') || 'PREGLED'; } 
 // FRAME_MODE (config.js): pregled na računalu/mobitelu - totem se prikazuje
 // kao uspravni 9:16 ekran na tamnoj pozadini, a video je točno u tom okviru
 // (cijeli, neobrezan). Na totemu je false: video prekriva cijeli ekran.
-var FRAME = typeof FRAME_MODE !== 'undefined' && FRAME_MODE;
-if (FRAME) document.documentElement.classList.add('frame-mode');
+// Okvir se uključuje i SAM kad ekran nije uspravan (npr. test na Macu/laptopu,
+// vodoravni prozor): video se tada ne razvlači preko cijelog ekrana.
+// Totem (1080x1920, uspravan) ostaje preko cijelog ekrana.
+var FRAME = false;
+function updateFrameMode() {
+  var forced = typeof FRAME_MODE !== 'undefined' && FRAME_MODE;
+  FRAME = forced || (window.innerWidth / window.innerHeight > 0.7);
+  document.documentElement.classList.toggle('frame-mode', FRAME);
+  if (!FRAME) {
+    var layer = document.getElementById('attract-layer');
+    if (layer) layer.style.left = layer.style.top = layer.style.width = layer.style.height = '';
+  }
+}
 if (typeof TAP_HINT !== 'undefined' && !TAP_HINT) document.documentElement.classList.add('tap-hint-off');
 
 function fitCanvas() {
+  updateFrameMode();
   var vw = window.innerWidth, vh = window.innerHeight;
   var scale = Math.min(vw / 1080, vh / 1920);
   var x = (vw - 1080 * scale) / 2, y = (vh - 1920 * scale) / 2;
