@@ -351,8 +351,9 @@ function confirmAnswer(tappedTimeMs) {
 // ===== ZADNJI SLAJD: REZULTAT + LEADERBOARD =====
 var leaderboardTimer = null;
 
+// Vrijeme s tisućinkama (npr. "4,236 s") - mjeri se i sprema u milisekundama
 function formatTime(ms) {
-  return (ms / 1000).toFixed(1).replace('.', ',') + ' s';
+  return (Math.round(ms) / 1000).toFixed(3).replace('.', ',') + ' s';
 }
 
 // Na javnom ekranu samo ime + inicijal prezimena ("Ivan H.")
