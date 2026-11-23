@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>AI asistent Bizzmo - Hrvatski Telekom</title>
+  <meta name="theme-color" content="#E20074">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+
+    <!-- SETUP (samo kod prvog pokretanja: naziv lokacije totema) -->
+    <div id="screen-setup" class="screen">
+      <div class="screen-content setup-content">
+        <h2 class="setup-title">Postavljanje totema</h2>
+        <p class="setup-hint">Upišite naziv lokacije:</p>
+        <input type="text" id="setup-input" class="setup-input" placeholder="NPR. ZAGREB - ARENA" maxlength="40" autocomplete="off" readonly>
+        <button class="btn-primary" onclick="saveSetupLocation()">Spremi i započni</button>
+      </div>
+    </div>
+
+    <img src="ht-logo-white.svg" alt="T" class="t-logo" id="t-logo">
+
+    <!-- MIROVANJE - video se vrti dok nitko ne igra, dodir pokreće kviz -->
+    <div id="screen-attract" class="screen" onclick="startFromAttract()">
+      <div class="attract-content">
+        <h1 class="attract-heading">AI asistent<br>Bizzmo</h1>
+        <!-- Video se NE prikazuje direktno: preglednik bi ga iscrtao hardverskim
+             putem s drukčijim bojama nego ostatak stranice. Crta se u canvas
+             (1920x1080) pa video i pozadina imaju potpuno istu nijansu. -->
+        <canvas id="attract-canvas" class="attract-video" width="1920" height="1080"></canvas>
+        <video id="attract-video" class="attract-video-source" src="video/bizzmo.mp4" muted loop playsinline preload="auto"></video>
+        <div class="attract-cta">Dodirnite ekran i zaigrajte</div>
+      </div>
+    </div>
+
+    <!-- SLAJD 1 - PODACI -->
+    <div id="screen-registration" class="screen">
+      <div class="screen-content registration-content">
+        <div class="reg-head">
+          <h1 class="reg-heading">AI asistent<br>Bizzmo</h1>
+          <p class="reg-subtitle">Upišite svoje podatke i odgovorite<br>na jedno kratko pitanje.</p>
+        </div>
+        <div class="reg-fields">
+          <div class="reg-field">
+            <label class="reg-label" for="reg-name">Ime i prezime:</label>
+            <input type="text" id="reg-name" class="reg-input" maxlength="50" autocomplete="off" readonly>
+          </div>
+          <div class="reg-field">
+            <label class="reg-label" for="reg-email">Email:</label>
+            <input type="email" id="reg-email" class="reg-input" maxlength="80" autocomplete="off" readonly>
+            <p class="reg-error" id="email-error">Provjerite email adresu.</p>
+          </div>
+        </div>
+        <div class="gdpr-consent" id="gdpr-consent" onclick="toggleGdpr()">
+          <div class="gdpr-checkbox" id="gdpr-check"></div>
+          <span class="gdpr-text">Pristajem na prikupljanje i obradu osobnih podataka (ime, prezime i email) u svrhu sudjelovanja u kvizu i informiranja o usluzi AI asistent Bizzmo i ponudama Hrvatskog Telekoma, u skladu s Općom uredbom o zaštiti podataka (GDPR).</span>
+        </div>
+        <button class="btn-primary" id="btn-reg-next" onclick="submitRegistration()" disabled>Dalje</button>
+      </div>
+    </div>
+
+    <!-- SLAJD 2 - PITANJE -->
+    <div id="screen-question" class="screen">
+      <div class="screen-content question-content">
+        <h2 class="question-title">Što je AI asistent Bizzmo?</h2>
+        <div class="options-list" id="options">
+          <div class="option-row" data-value="A" onclick="selectOption(this)">
+            <div class="option-letter">A</div>
+            <span class="option-label">Digitalna platforma za upravljanje bazom klijenata, rezervaciju termina i izradu marketinških kampanja</span>
+          </div>
+          <div class="option-row" data-value="B" onclick="selectOption(this)">
+            <div class="option-letter">B</div>
+            <span class="option-label">Tiskano izdanje časopisa koji piše o umjetnoj inteligenciji</span>
+          </div>
+          <div class="option-row" data-value="C" onclick="selectOption(this)">
+            <div class="option-letter">C</div>
+            <span class="option-label">Mobilna aplikacija za izdavanje e-računa</span>
+          </div>
+        </div>
+        <button class="btn-primary" id="btn-answer" onclick="confirmAnswer()" disabled>Potvrdi</button>
+      </div>
+    </div>
+
+    <!-- ZADNJI SLAJD - REZULTAT + LEADERBOARD (5 najbržih točnih) -->
+    <div id="screen-leaderboard" class="screen">
+      <div class="screen-content leaderboard-content">
+        <div class="result-head">
+          <h2 class="result-title" id="result-title">Točno!</h2>
+          <p class="result-text" id="result-text"></p>
+        </div>
+        <div class="lb">
+          <h3 class="lb-title">Najbrži točni odgovori</h3>
+          <ol class="lb-list" id="lb-list"></ol>
+          <p class="lb-own" id="lb-own"></p>
+        </div>
+        <button class="btn-primary btn-new-player" onclick="newPlayer()">Novi natjecatelj</button>
+      </div>
+    </div>
+
+    <!-- TIPKOVNICA -->
+    <div id="keyboard" class="keyboard">
+      <div class="keyboard-row" id="kb-row-1"></div>
+      <div class="keyboard-row" id="kb-row-2"></div>
+      <div class="keyboard-row" id="kb-row-3"></div>
+      <div class="keyboard-row" id="kb-row-4"></div>
+    </div>
+
+    <!-- ADMIN (3 dodira u gornji desni kut unutar 1.5 s) -->
+    <div id="admin-overlay" class="admin-overlay">
+      <p class="admin-title">Admin meni</p>
+      <p class="admin-stats" id="admin-stats"></p>
+      <button class="admin-btn admin-btn-primary" onclick="exitApp()">Izađi iz aplikacije</button>
+      <button class="admin-btn" onclick="openRanking()">Poredak danas</button>
+      <button class="admin-btn" id="btn-wipe" onclick="wipeLocalData()">Obriši podatke s ovog totema</button>
+      <button class="admin-btn admin-btn-light" onclick="closeAdmin()">Natrag u app</button>
+    </div>
+
+    <!-- IZLAZ IZ APLIKACIJE -->
+    <div id="exit-overlay" class="exit-overlay">
+      <p class="exit-msg" id="exit-msg">Zatvaram aplikaciju...</p>
+      <div class="exit-help" id="exit-help" style="display:none">
+        <p>Na totemu pritisnite <b>Alt + F4</b> na tipkovnici.<br>Pravi izlaz na desktop radi kad je app instaliran s INSTALL.bat.</p>
+        <button class="admin-btn admin-btn-light" onclick="cancelExit()">Natrag u app</button>
+      </div>
+    </div>
+
+    <!-- ADMIN: CIJELI POREDAK DANAS -->
+    <div id="ranking-overlay" class="ranking-overlay">
+      <div class="ranking-head">
+        <p class="ranking-title">Poredak danas</p>
+        <p class="ranking-meta" id="ranking-meta"></p>
+      </div>
+      <div class="ranking-table-wrap">
+        <table class="ranking-table">
+          <thead><tr><th>#</th><th>Ime i prezime</th><th>Vrijeme</th><th>Odgovor</th><th>Lokacija</th><th>Sat</th></tr></thead>
+          <tbody id="ranking-body"></tbody>
+        </table>
+      </div>
+      <div class="ranking-actions">
+        <button class="admin-btn" onclick="openRanking()">Osvježi</button>
+        <button class="admin-btn admin-btn-light" onclick="closeRanking()">Natrag</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="config.js"></script>
+  <script src="storage.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

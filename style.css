@@ -1,0 +1,593 @@
+/* ===== AI asistent Bizzmo - totem 1080x1920 =====
+   Vizualni sustav preuzet 1:1 iz MAXtv 20 godina appa (odobren od HT-a):
+   magenta pozadina, TeleNeo font, bijeli "pill" CTA-ovi u verzalu,
+   Telekom Magnetic Motion krivulje (bez elastičnog odskoka). */
+
+@font-face { font-family: 'TeleNeo'; src: url('fonts/TeleNeoWeb-Regular.woff2') format('woff2'); font-weight: 400; font-display: block; }
+@font-face { font-family: 'TeleNeo'; src: url('fonts/TeleNeoWeb-Medium.woff2') format('woff2'); font-weight: 500; font-display: block; }
+@font-face { font-family: 'TeleNeo'; src: url('fonts/TeleNeoWeb-Bold.woff2') format('woff2'); font-weight: 700; font-display: block; }
+@font-face { font-family: 'TeleNeo'; src: url('fonts/TeleNeoWeb-ExtraBold.woff2') format('woff2'); font-weight: 800; font-display: block; }
+@font-face { font-family: 'TeleNeoOriginal'; src: url('fonts/TeleNeo-ExtraBold.woff2') format('woff2'); font-weight: 800; font-display: block; }
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+:root {
+  /* Službena Telekom magenta = točno boja pozadine Bizzmo videa kako je
+     preglednik iscrtava (#E20073/74). Mora biti ista, inače se oko videa
+     vidi pravokutnik. app.js je još i fino uskladi s videom ako može. */
+  --magenta: #E20073;
+  --magenta-dark: #B3005C;
+  --white: #FFFFFF;
+  --black: #000000;
+  --font-heading: 'TeleNeoOriginal', 'TeleNeo', sans-serif;
+  --font-body: 'TeleNeo', sans-serif;
+  /* Telekom Magnetic Motion krivulje */
+  --ease-subtle: cubic-bezier(0.7, 0, 0.3, 1);
+  --ease-expressive: cubic-bezier(0.9, 0, 0.1, 1);
+}
+
+html, body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--magenta);
+  color: var(--white);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  touch-action: manipulation;
+}
+
+#app {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 1080px;
+  height: 1920px;
+  transform-origin: top left;
+  overflow: hidden;
+  background: var(--magenta);
+}
+
+.screen {
+  position: absolute;
+  inset: 0;
+  display: none;
+  background: var(--magenta);
+}
+.screen.active { display: flex; }
+
+.screen-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 200px 110px;
+}
+
+/* ===== T LOGO ===== */
+.t-logo {
+  position: absolute;
+  top: 60px;
+  right: 60px;
+  width: 110px;
+  z-index: 100;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.t-logo-hidden { opacity: 0; }
+
+/* ===== MAGNETIC MOTION ===== */
+@keyframes fly-in-settle {
+  0%   { opacity: 0; transform: translateY(-90px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes rise-in {
+  0%   { opacity: 0; transform: translateY(60px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== BUTTONS ===== */
+.btn-primary {
+  align-self: flex-start;
+  padding: 32px 64px;
+  background: var(--white);
+  color: var(--magenta);
+  border: none;
+  border-radius: 100px;
+  font-family: var(--font-heading);
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.3s ease;
+}
+.btn-primary:active { transform: scale(0.97); }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-hidden { opacity: 0 !important; pointer-events: none; }
+
+/* ===== SETUP ===== */
+.setup-content { align-items: center; gap: 44px; padding-bottom: 600px; }
+.setup-title { font-family: var(--font-heading); font-size: 64px; font-weight: 800; text-align: center; }
+.setup-hint { font-size: 34px; opacity: 0.85; text-align: center; }
+.setup-input {
+  width: 100%;
+  padding: 34px 44px;
+  border: none;
+  border-radius: 60px;
+  font-family: var(--font-heading);
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--black);
+  text-transform: uppercase;
+  outline: none;
+}
+.setup-content .btn-primary { align-self: center; }
+
+/* ===== SLAJD 1: PODACI ===== */
+.registration-content {
+  gap: 70px;
+  transition: transform 0.6s var(--ease-subtle);
+}
+/* Kad je tipkovnica otvorena, cijeli blok se podigne da polja ostanu vidljiva */
+.kb-open .registration-content { transform: translateY(-230px); }
+
+.reg-head { display: flex; flex-direction: column; gap: 36px; }
+
+.reg-heading {
+  font-family: var(--font-heading);
+  font-size: 120px;
+  font-weight: 800;
+  line-height: 1.02;
+}
+.screen.active .reg-heading { animation: fly-in-settle 1.5s var(--ease-subtle) both; }
+
+.reg-subtitle {
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: rgba(255,255,255,0.95);
+}
+.screen.active .reg-subtitle { animation: fly-in-settle 1.5s var(--ease-subtle) both; animation-delay: 0.35s; }
+
+.reg-fields { display: flex; flex-direction: column; gap: 56px; }
+.screen.active .reg-fields { animation: rise-in 1s var(--ease-expressive) both; animation-delay: 0.2s; }
+
+.reg-field { display: flex; flex-direction: column; gap: 14px; position: relative; }
+
+.reg-label {
+  font-family: var(--font-heading);
+  font-size: 52px;
+  font-weight: 800;
+}
+
+.reg-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid rgba(255,255,255,0.7);
+  padding: 8px 4px 20px;
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: 42px;
+  font-weight: 500;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+.reg-input.focused { border-bottom-color: var(--white); border-bottom-width: 5px; padding-bottom: 18px; }
+
+.reg-error {
+  position: absolute;
+  left: 4px;
+  bottom: -46px;
+  font-size: 26px;
+  font-weight: 700;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.reg-error.visible { opacity: 1; }
+
+/* ===== GDPR ===== */
+.gdpr-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 26px;
+  cursor: pointer;
+}
+.gdpr-checkbox {
+  width: 52px;
+  height: 52px;
+  min-width: 52px;
+  border-radius: 8px;
+  border: 3px solid rgba(255,255,255,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  margin-top: 2px;
+}
+.gdpr-checkbox.checked { background: var(--white); border-color: var(--white); }
+.gdpr-checkbox.checked::after {
+  content: '\2713';
+  color: var(--magenta);
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1;
+}
+.gdpr-text {
+  font-size: 25px;
+  font-weight: 700;
+  line-height: 1.45;
+  color: rgba(255,255,255,0.9);
+}
+
+/* ===== SLAJD 2: PITANJE ===== */
+.question-content { gap: 80px; }
+
+.question-title {
+  font-family: var(--font-heading);
+  font-size: 92px;
+  font-weight: 800;
+  line-height: 1.08;
+}
+.screen.active .question-title { animation: fly-in-settle 1.5s var(--ease-subtle) both; }
+
+.options-list { display: flex; flex-direction: column; gap: 36px; }
+
+.option-row {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+  padding: 38px 44px;
+  border-radius: 40px;
+  outline: 4px solid rgba(255,255,255,0.85);
+  outline-offset: -4px;
+  cursor: pointer;
+  transition: background 0.25s ease, color 0.25s ease, opacity 0.4s ease, outline-color 0.25s ease;
+}
+.screen.active .option-row { animation: rise-in 1s var(--ease-expressive) both; }
+.screen.active .option-row:nth-child(1) { animation-delay: 0.25s; }
+.screen.active .option-row:nth-child(2) { animation-delay: 0.4s; }
+.screen.active .option-row:nth-child(3) { animation-delay: 0.55s; }
+
+.option-letter {
+  width: 88px;
+  height: 88px;
+  min-width: 88px;
+  border-radius: 50%;
+  border: 4px solid var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-size: 44px;
+  font-weight: 800;
+  transition: all 0.25s ease;
+}
+.option-label {
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.option-row.selected { background: var(--white); color: var(--magenta); outline-color: var(--white); }
+.option-row.selected .option-letter { background: var(--magenta); border-color: var(--magenta); color: var(--white); }
+
+/* Povratna informacija nakon "Potvrdi" */
+.option-row.correct { background: var(--white); color: var(--magenta); outline-color: var(--white); }
+.option-row.correct .option-letter { background: var(--magenta); border-color: var(--magenta); color: transparent; position: relative; }
+.option-row.correct .option-letter::after { content: '\2713'; position: absolute; color: var(--white); font-size: 48px; }
+.option-row.wrong { background: transparent; color: var(--white); outline-color: var(--white); opacity: 0.85; }
+.option-row.wrong .option-letter { background: transparent; color: transparent; position: relative; }
+.option-row.wrong .option-letter::after { content: '\2715'; position: absolute; color: var(--white); font-size: 44px; }
+.option-row.dimmed { opacity: 0.35; }
+
+.question-content .btn-primary { align-self: flex-end; }
+
+/* ===== MIROVANJE: VIDEO =====
+   Video je 16:9 (1920x1080) na okomitom totemu - ide preko cijele širine.
+   Pozadina videa = app magenta, a rubovi videa su još i mekano utopljeni
+   (maska), pa se granica videa nigdje ne vidi. */
+#screen-attract { cursor: pointer; }
+.attract-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 260px 0 240px;
+}
+.attract-heading {
+  align-self: flex-start;
+  padding-left: 110px;
+  font-family: var(--font-heading);
+  font-size: 120px;
+  font-weight: 800;
+  line-height: 1.02;
+}
+.screen.active .attract-heading { animation: fly-in-settle 1.5s var(--ease-subtle) both; }
+.attract-video {
+  width: 1080px;
+  aspect-ratio: 16 / 9;          /* točno 1920x1080 skalirano, bez rastezanja */
+  height: auto;
+  object-fit: contain;
+  display: block;
+  background: var(--magenta);
+  /* mekani prijelaz na sva četiri ruba */
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%),
+    linear-gradient(to bottom, transparent 0, #000 10%, #000 90%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%),
+    linear-gradient(to bottom, transparent 0, #000 10%, #000 90%, transparent 100%);
+  mask-composite: intersect;
+}
+/* Izvorni <video> samo dekodira slike za canvas - praktički nevidljiv, ali
+   "na ekranu", da ga preglednik ne pauzira kao skriveni video. */
+.attract-video-source {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 4px;
+  height: 4px;
+  opacity: 0.01;
+  pointer-events: none;
+}
+.attract-cta {
+  padding: 34px 70px;
+  border-radius: 100px;
+  background: var(--white);
+  color: var(--magenta);
+  font-family: var(--font-heading);
+  font-size: 36px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  animation: cta-breathe 2.4s var(--ease-subtle) infinite alternate;
+}
+@keyframes cta-breathe {
+  0%   { transform: scale(1); }
+  100% { transform: scale(1.06); }
+}
+
+/* ===== ZADNJI SLAJD: REZULTAT + LEADERBOARD ===== */
+.leaderboard-content { gap: 90px; }
+
+.result-head { display: flex; flex-direction: column; gap: 28px; }
+.result-title {
+  font-family: var(--font-heading);
+  font-size: 120px;
+  font-weight: 800;
+  line-height: 1.02;
+}
+.screen.active .result-title { animation: fly-in-settle 1.5s var(--ease-subtle) both; }
+.result-text {
+  font-size: 42px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: rgba(255,255,255,0.95);
+}
+.result-text b { font-family: var(--font-heading); font-weight: 800; }
+.screen.active .result-text { animation: fly-in-settle 1.5s var(--ease-subtle) both; animation-delay: 0.35s; }
+
+.lb { display: flex; flex-direction: column; gap: 30px; }
+.lb-title {
+  font-family: var(--font-heading);
+  font-size: 52px;
+  font-weight: 800;
+}
+.lb-list { list-style: none; display: flex; flex-direction: column; gap: 18px; }
+.lb-row {
+  display: flex;
+  align-items: center;
+  gap: 34px;
+  padding: 26px 44px;
+  border-radius: 100px;
+  outline: 4px solid rgba(255,255,255,0.85);
+  outline-offset: -4px;
+  font-size: 40px;
+  font-weight: 700;
+}
+.screen.active .lb-row { animation: rise-in 1s var(--ease-expressive) both; }
+.lb-rank {
+  width: 64px;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 44px;
+}
+.lb-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lb-time {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.lb-row.lb-me { background: var(--white); color: var(--magenta); outline-color: var(--white); }
+.lb-empty { font-size: 40px; font-weight: 700; opacity: 0.9; }
+.lb-own {
+  font-size: 36px;
+  font-weight: 700;
+  padding-left: 8px;
+}
+.lb-own b { font-family: var(--font-heading); font-weight: 800; }
+
+.btn-new-player { align-self: stretch; padding: 38px 64px; font-size: 38px; }
+.screen.active .btn-new-player { animation: rise-in 1s var(--ease-expressive) both; animation-delay: 1s; }
+
+/* ===== TIPKOVNICA ===== */
+.keyboard {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  padding: 18px 16px 28px;
+  background: #2C2C2E;
+  border-radius: 28px 28px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 1000;
+  transform: translateY(105%);
+  transition: transform 0.35s var(--ease-subtle);
+}
+.keyboard.visible { transform: translateY(0); }
+.keyboard-row { display: flex; justify-content: center; gap: 9px; }
+
+.kb-key {
+  position: relative;
+  flex: 1;
+  max-width: 96px;
+  height: 92px;
+  border: none;
+  border-radius: 14px;
+  background: #636366;
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: 36px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.08s ease, transform 0.08s ease;
+}
+.kb-key.kb-pressed { background: var(--magenta); transform: scale(1.12); z-index: 5; }
+.kb-space { flex: 4; max-width: 440px; font-size: 28px; }
+.kb-shift, .kb-backspace, .kb-num, .kb-abc { background: #48484A; flex: 1.5; max-width: 140px; font-size: 30px; }
+.kb-shift.active { background: var(--white); color: var(--black); }
+.kb-done { background: var(--magenta); flex: 1.6; max-width: 160px; font-size: 30px; font-weight: 800; }
+.kb-domain { background: #48484A; flex: 1.4; max-width: 140px; font-size: 30px; }
+
+.kb-diacritic-popup {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 10px;
+  display: flex;
+  gap: 6px;
+  padding: 10px;
+  background: #1C1C1E;
+  border-radius: 18px;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.5);
+  z-index: 1100;
+}
+.kb-diacritic-option {
+  width: 92px;
+  height: 92px;
+  border: none;
+  border-radius: 14px;
+  background: #636366;
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: 38px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.kb-diacritic-option:active { background: var(--magenta); }
+
+/* ===== ADMIN ===== */
+.admin-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 9999;
+  background: #000;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+}
+.admin-overlay.visible { display: flex; }
+.admin-title { font-family: var(--font-heading); font-size: 56px; font-weight: 800; margin-bottom: 10px; }
+.admin-stats { font-size: 30px; font-weight: 500; line-height: 1.6; text-align: center; color: rgba(255,255,255,0.85); margin-bottom: 30px; }
+.admin-btn {
+  width: 720px;
+  padding: 34px 52px;
+  border: none;
+  border-radius: 100px;
+  background: #333;
+  color: #fff;
+  font-family: var(--font-heading);
+  font-size: 32px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.admin-btn-primary { background: var(--magenta); }
+
+/* ===== IZLAZ ===== */
+.exit-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10001;
+  background: #000;
+  color: #fff;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 50px;
+  padding: 0 90px;
+  text-align: center;
+}
+.exit-overlay.visible { display: flex; }
+.exit-msg { font-family: var(--font-heading); font-size: 52px; font-weight: 800; }
+.exit-help { display: flex; flex-direction: column; align-items: center; gap: 50px; font-size: 32px; font-weight: 500; line-height: 1.5; color: rgba(255,255,255,0.8); }
+.exit-help b { color: #fff; font-weight: 800; }
+
+/* ===== ADMIN: POREDAK DANAS ===== */
+.ranking-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10000;
+  background: #000;
+  color: #fff;
+  display: none;
+  flex-direction: column;
+  gap: 36px;
+  padding: 110px 60px 80px;
+}
+.ranking-overlay.visible { display: flex; }
+.ranking-head { display: flex; flex-direction: column; gap: 16px; }
+.ranking-title { font-family: var(--font-heading); font-size: 56px; font-weight: 800; }
+.ranking-meta { font-size: 28px; font-weight: 500; color: rgba(255,255,255,0.75); line-height: 1.4; }
+.ranking-meta b { color: #fff; font-weight: 800; }
+.ranking-table-wrap {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+  border-top: 2px solid #333;
+}
+.ranking-table { width: 100%; border-collapse: collapse; font-size: 27px; font-variant-numeric: tabular-nums; }
+.ranking-table th {
+  position: sticky;
+  top: 0;
+  background: #000;
+  text-align: left;
+  font-size: 22px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(255,255,255,0.6);
+  padding: 18px 12px;
+}
+.ranking-table td { padding: 20px 12px; border-bottom: 1px solid #262626; font-weight: 500; }
+.ranking-table td:first-child { font-family: var(--font-heading); font-weight: 800; color: var(--magenta); width: 70px; }
+.ranking-table td:nth-child(2) { font-weight: 700; }
+.ranking-table tr.ranking-wrong td { color: rgba(255,255,255,0.45); }
+.ranking-table tr.ranking-wrong td:first-child { color: rgba(255,255,255,0.3); }
+.ranking-empty { text-align: center; padding: 80px 0 !important; color: rgba(255,255,255,0.6); }
+.ranking-actions { display: flex; gap: 24px; justify-content: center; }
+.ranking-actions .admin-btn { width: 460px; }
+.admin-btn-light { background: #fff; color: #000; }
