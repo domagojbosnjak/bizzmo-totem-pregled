@@ -316,6 +316,17 @@ html.frame-mode #attract-layer {
   border-radius: var(--frame-radius, 20px);
   overflow: hidden;
 }
+/* Nikakve kontrole preglednika na videu (traka trajanja, play, PiP...) */
+#attract-video::-webkit-media-controls,
+#attract-video::-webkit-media-controls-enclosure,
+#attract-video::-webkit-media-controls-panel,
+#attract-video::-webkit-media-controls-timeline,
+#attract-video::-webkit-media-controls-overlay-play-button,
+#attract-video::-webkit-media-controls-start-playback-button {
+  display: none !important;
+  -webkit-appearance: none;
+  opacity: 0 !important;
+}
 #attract-video {
   width: 100%;
   height: 100%;
