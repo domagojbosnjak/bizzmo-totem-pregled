@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Bizzmo AI asistent - Hrvatski Telekom</title>
   <meta name="theme-color" content="#E20074">
-  <link rel="stylesheet" href="style.css?v=2.3">
+  <link rel="stylesheet" href="style.css?v=2.4">
 </head>
 <body>
   <!-- Okomiti Bizzmo explainer preko CIJELOG ekrana (izvan skaliranog appa,
@@ -50,11 +50,12 @@
           <div class="reg-field">
             <label class="reg-label" for="reg-name">Ime i prezime:</label>
             <input type="text" id="reg-name" class="reg-input" maxlength="50" autocomplete="off" readonly>
+            <p class="reg-error" id="name-error">Upišite ime i prezime.</p>
           </div>
           <div class="reg-field">
             <label class="reg-label" for="reg-oib">OIB tvrtke:</label>
             <input type="text" id="reg-oib" class="reg-input" maxlength="11" inputmode="numeric" autocomplete="off" readonly>
-            <p class="reg-error" id="oib-error">Provjerite OIB (11 znamenki).</p>
+            <p class="reg-error" id="oib-error">OIB nije ispravan, provjerite znamenke.</p>
           </div>
           <div class="reg-field">
             <label class="reg-label" for="reg-phone">Kontakt broj:</label>
@@ -66,7 +67,7 @@
           <div class="gdpr-checkbox" id="gdpr-check"></div>
           <span class="gdpr-text">Pristajem na prikupljanje i obradu osobnih podataka (ime i prezime, OIB tvrtke i kontakt broj) u svrhu sudjelovanja u kvizu i informiranja o usluzi Bizzmo AI asistent i ponudama Hrvatskog Telekoma, u skladu s Općom uredbom o zaštiti podataka (GDPR).</span>
         </div>
-        <button class="btn-primary" id="btn-reg-next" onclick="submitRegistration()" disabled>Dalje</button>
+        <button class="btn-primary is-disabled" id="btn-reg-next" onclick="submitRegistration()">Dalje</button>
       </div>
     </div>
 
@@ -155,8 +156,8 @@
 
   </div>
 
-  <script src="config.js?v=2.3"></script>
-  <script src="storage.js?v=2.3"></script>
-  <script src="app.js?v=2.3"></script>
+  <script src="config.js?v=2.4"></script>
+  <script src="storage.js?v=2.4"></script>
+  <script src="app.js?v=2.4"></script>
 </body>
 </html>

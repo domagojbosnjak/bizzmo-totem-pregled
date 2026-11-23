@@ -3,7 +3,7 @@
 //      -> označi točan/netočan -> Zahvala -> nakon 8 s natrag na Slajd 1.
 
 var DEVICE_LOCATION = '';
-try { DEVICE_LOCATION = localStorage.getItem('bizzmo_location') || 'PREGLED'; } catch (e) {}
+try { DEVICE_LOCATION = localStorage.getItem('bizzmo_location') || ''; } catch (e) {}
 // Installer predaje lokaciju u linku (index.html?lokacija=ZAGREB) - ima
 // prednost pred spremljenom, pa ponovni INSTALL.bat mijenja lokaciju.
 (function() {
@@ -330,7 +330,9 @@ function updateRegNext() {
   var name = document.getElementById('reg-name').value.trim();
   var gdpr = document.getElementById('gdpr-check').classList.contains('checked');
   var oibOk = validateOib(false), phoneOk = validatePhone(false);
-  document.getElementById('btn-reg-next').disabled = !(name.length >= 2 && oibOk && phoneOk && gdpr);
+  document.getElementById('btn-reg-next').classList.toggle('is-disabled', !(name.length >= 2 && oibOk && phoneOk && gdpr));
+  if (name.length >= 2) document.getElementById('name-error').classList.remove('visible');
+  if (gdpr) document.getElementById('gdpr-check').classList.remove('attention');
   if (oibOk) document.getElementById('oib-error').classList.remove('visible');
   if (phoneOk) document.getElementById('phone-error').classList.remove('visible');
 }
@@ -338,8 +340,25 @@ document.getElementById('reg-name').addEventListener('input', updateRegNext);
 document.getElementById('reg-oib').addEventListener('input', updateRegNext);
 document.getElementById('reg-phone').addEventListener('input', updateRegNext);
 
+// Dodir na DALJE dok nešto nije ispravno: pokaži što točno nedostaje
+function showRegErrors() {
+  var nameOk = document.getElementById('reg-name').value.trim().length >= 2;
+  document.getElementById('name-error').classList.toggle('visible', !nameOk);
+  var oibOk = validateOib(false), phoneOk = validatePhone(false);
+  document.getElementById('oib-error').classList.toggle('visible', !oibOk);
+  document.getElementById('phone-error').classList.toggle('visible', !phoneOk);
+  var box = document.getElementById('gdpr-check');
+  if (!box.classList.contains('checked')) {
+    box.classList.remove('attention'); void box.offsetWidth; box.classList.add('attention');
+  }
+}
+
 function submitRegistration() {
-  if (document.getElementById('btn-reg-next').disabled) return;
+  if (document.getElementById('btn-reg-next').classList.contains('is-disabled')) {
+    hideKeyboard();
+    showRegErrors();
+    return;
+  }
   hideKeyboard();
   showScreen('screen-question');
   questionShownAt = performance.now();
@@ -509,7 +528,9 @@ function goToStart() {
   document.getElementById('oib-error').classList.remove('visible');
   document.getElementById('phone-error').classList.remove('visible');
   document.getElementById('gdpr-check').classList.remove('checked');
-  document.getElementById('btn-reg-next').disabled = true;
+  document.getElementById('btn-reg-next').classList.add('is-disabled');
+  document.getElementById('name-error').classList.remove('visible');
+  document.getElementById('gdpr-check').classList.remove('attention');
   document.getElementById('btn-answer').disabled = true;
   document.getElementById('btn-answer').classList.remove('btn-hidden');
   document.querySelectorAll('.option-row').forEach(function(r) { r.className = 'option-row'; });

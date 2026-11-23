@@ -111,7 +111,7 @@ html, body {
   transition: transform 0.15s ease, opacity 0.3s ease;
 }
 .btn-primary:active { transform: scale(0.97); }
-.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-primary:disabled, .btn-primary.is-disabled { opacity: 0.4; }
 .btn-hidden { opacity: 0 !important; pointer-events: none; }
 
 /* ===== SETUP ===== */
@@ -215,6 +215,13 @@ html, body {
   margin-top: 2px;
 }
 .gdpr-checkbox.checked { background: var(--white); border-color: var(--white); }
+/* dodir na DALJE bez kvačice: kućica zatrese i podebljava se */
+.gdpr-checkbox.attention { border-width: 6px; border-color: var(--white); animation: gdpr-shake 0.45s ease; }
+@keyframes gdpr-shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-10px); }
+  40%, 80% { transform: translateX(10px); }
+}
 .gdpr-checkbox.checked::after {
   content: '\2713';
   color: var(--magenta);
