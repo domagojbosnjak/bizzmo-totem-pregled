@@ -61,6 +61,54 @@ function showScreen(id) {
   }
 }
 
+// ===== VIDEO NIKAD NE STAJE =====
+// Dok je ekran mirovanja aktivan, video se mora vrtjeti bez prestanka.
+// "loop" je dovoljan u većini slučajeva, ali preglednik može video sam
+// pauzirati (štednja energije, Edge efficiency mode) ili zapeti na skoku s
+// kraja na početak. Ovo ga uvijek vrati u pokret.
+(function keepVideoLooping() {
+  var video = document.getElementById('attract-video');
+  var lastTime = -1, stuckTicks = 0;
+  function attractActive() { return document.body.classList.contains('attract-on'); }
+  function kick() {
+    var p = video.play();
+    if (p && p.catch) p.catch(function() {});
+  }
+  // kraj videa (ako loop iz nekog razloga ne preuzme)
+  video.addEventListener('ended', function() {
+    if (!attractActive()) return;
+    try { video.currentTime = 0; } catch (e) {}
+    kick();
+  });
+  // netko/nešto ga je pauziralo dok je ekran mirovanja aktivan
+  video.addEventListener('pause', function() { if (attractActive()) setTimeout(kick, 50); });
+  // greška u čitanju datoteke -> ponovno učitaj
+  video.addEventListener('error', function() {
+    if (!attractActive()) return;
+    setTimeout(function() { video.load(); kick(); }, 1000);
+  });
+  // čuvar: svake 2 s provjeri da vrijeme videa ide naprijed
+  setInterval(function() {
+    if (!attractActive()) { lastTime = -1; stuckTicks = 0; return; }
+    if (video.paused) { kick(); return; }
+    if (video.currentTime === lastTime) {
+      stuckTicks++;
+      if (stuckTicks >= 2) {              // zapelo ~4 s -> od početka
+        stuckTicks = 0;
+        try { video.currentTime = 0; } catch (e) {}
+        kick();
+      }
+    } else {
+      stuckTicks = 0;
+    }
+    lastTime = video.currentTime;
+  }, 2000);
+  // povratak u prozor / buđenje ekrana
+  document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'visible' && attractActive()) kick();
+  });
+})();
+
 function startFromAttract() {
   showScreen('screen-registration');
   // Brži tok: tipkovnica se odmah otvori na "Ime i prezime"
