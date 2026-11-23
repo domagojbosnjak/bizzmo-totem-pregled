@@ -299,12 +299,16 @@ html, body {
 #attract-layer {
   position: fixed;
   inset: 0;
+  overflow: hidden;
   z-index: 50;
   display: none;
   background: #000;
   cursor: pointer;
 }
 body.attract-on #attract-layer { display: block; }
+/* Dok se vrti video, app ispod njega se ne crta - inače magenta pozadina
+   appa može virjeti kao tanka crta uz rub videa (zaokruživanje piksela). */
+body.attract-on #app { visibility: hidden; }
 /* Pregled (FRAME_MODE): totem kao uspravni ekran na tamnoj pozadini */
 html.frame-mode, html.frame-mode body { background: #121212; }
 html.frame-mode #app {
@@ -327,10 +331,17 @@ html.frame-mode #attract-layer {
   -webkit-appearance: none;
   opacity: 0 !important;
 }
+/* U sam video je ugrađena ružičasta traka napretka na donjih 9 px
+   (redovi 1911-1919 od 1920). Video se zato minimalno poveća (1920/1908 =
+   +0,63 %) i poravna uz vrh, pa donjih 12 px izađe izvan ekrana. */
 #attract-video {
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  top: 0;
+  left: -0.315%;
+  width: 100.63%;
+  height: 100.63%;
   object-fit: cover;
+  object-position: 50% 0;
   display: block;
   pointer-events: none;
 }
