@@ -21,6 +21,7 @@ try { DEVICE_LOCATION = localStorage.getItem('bizzmo_location') || 'PREGLED'; } 
 // (cijeli, neobrezan). Na totemu je false: video prekriva cijeli ekran.
 var FRAME = typeof FRAME_MODE !== 'undefined' && FRAME_MODE;
 if (FRAME) document.documentElement.classList.add('frame-mode');
+if (typeof TAP_HINT !== 'undefined' && !TAP_HINT) document.documentElement.classList.add('tap-hint-off');
 
 function fitCanvas() {
   var vw = window.innerWidth, vh = window.innerHeight;
