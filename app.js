@@ -32,7 +32,7 @@ function showScreen(id) {
   var el = document.getElementById(id);
   void el.offsetWidth;
   el.classList.add('active');
-  document.getElementById('t-logo').classList.toggle('t-logo-hidden', id === 'screen-setup');
+  document.getElementById('t-logo').classList.toggle('t-logo-hidden', id === 'screen-setup' || id === 'screen-attract');
 
   // Video se vrti samo na ekranu mirovanja (štedi slabi totem), uvijek od početka
   var video = document.getElementById('attract-video');
@@ -44,54 +44,6 @@ function showScreen(id) {
     video.pause();
   }
 }
-
-// ===== VIDEO KROZ CANVAS =====
-// <video> preglednik iscrtava hardverskim putem (overlay) s drukčijom
-// pretvorbom boja od CSS-a, pa ista magenta izgleda kao dvije nijanse.
-// Zato se svaka slika videa crta u canvas (1920x1080) - canvas i CSS idu
-// istim putem boja, pa je pozadina videa identična pozadini appa.
-(function videoToCanvas() {
-  var video = document.getElementById('attract-video');
-  var canvas = document.getElementById('attract-canvas');
-  var ctx = canvas.getContext('2d', { alpha: false });
-  var sampled = false;
-
-  function paintBg() {
-    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--magenta') || '#E20073';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-  }
-  paintBg();
-
-  // Ako preglednik dopusti (http/https), izmjeri točnu boju pozadine videa i
-  // postavi je kao magentu appa. Na file:// (totem) nije dopušteno - tada
-  // ostaje #E20073 iz style.css, što je ista dekodirana vrijednost.
-  function sample() {
-    sampled = true;
-    try {
-      var d = ctx.getImageData(960, 6, 1, 1).data;
-      if (d[0] > 180 && d[1] < 50 && d[2] > 70 && d[2] < 160) {
-        document.documentElement.style.setProperty('--magenta',
-          '#' + [d[0], d[1], d[2]].map(function(n) { return ('0' + n.toString(16)).slice(-2); }).join(''));
-      }
-    } catch (e) { /* file:// - ostaje boja iz CSS-a */ }
-  }
-
-  function draw() {
-    if (video.readyState >= 2) {
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      if (!sampled) sample();
-    }
-  }
-
-  var useVfc = 'requestVideoFrameCallback' in HTMLVideoElement.prototype;
-  function loop() {
-    var active = document.getElementById('screen-attract').classList.contains('active');
-    if (active) draw();
-    if (useVfc && active && !video.paused) video.requestVideoFrameCallback(loop);
-    else requestAnimationFrame(loop);
-  }
-  loop();
-})();
 
 function startFromAttract() {
   showScreen('screen-registration');

@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>AI asistent Bizzmo - Hrvatski Telekom</title>
   <meta name="theme-color" content="#E20074">
-  <link rel="stylesheet" href="style.css?v=1.2.1">
+  <link rel="stylesheet" href="style.css?v=1.3">
 </head>
 <body>
   <div id="app">
@@ -25,15 +25,9 @@
 
     <!-- MIROVANJE - video se vrti dok nitko ne igra, dodir pokreće kviz -->
     <div id="screen-attract" class="screen" onclick="startFromAttract()">
-      <div class="attract-content">
-        <h1 class="attract-heading">AI asistent<br>Bizzmo</h1>
-        <!-- Video se NE prikazuje direktno: preglednik bi ga iscrtao hardverskim
-             putem s drukčijim bojama nego ostatak stranice. Crta se u canvas
-             (1920x1080) pa video i pozadina imaju potpuno istu nijansu. -->
-        <canvas id="attract-canvas" class="attract-video" width="1920" height="1080"></canvas>
-        <video id="attract-video" class="attract-video-source" src="video/bizzmo.mp4" muted loop playsinline preload="auto"></video>
-        <div class="attract-cta">Dodirnite ekran i zaigrajte</div>
-      </div>
+      <!-- Okomiti Bizzmo explainer (1080x1920) preko cijelog ekrana, u petlji.
+           Dodir bilo gdje pokreće kviz. -->
+      <video id="attract-video" class="attract-fullscreen" src="video/bizzmo-explainer.mp4" muted loop playsinline preload="auto"></video>
     </div>
 
     <!-- SLAJD 1 - PODACI -->
@@ -147,8 +141,8 @@
 
   </div>
 
-  <script src="config.js?v=1.2.1"></script>
-  <script src="storage.js?v=1.2.1"></script>
-  <script src="app.js?v=1.2.1"></script>
+  <script src="config.js?v=1.3"></script>
+  <script src="storage.js?v=1.3"></script>
+  <script src="app.js?v=1.3"></script>
 </body>
 </html>
