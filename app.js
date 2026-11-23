@@ -95,6 +95,8 @@ function showScreen(id) {
 
 function startFromAttract() {
   showScreen('screen-registration');
+  // Brži tok: tipkovnica se odmah otvori na "Ime i prezime"
+  showKeyboard(document.getElementById('reg-name'));
   startInactivityTimer();
 }
 
@@ -301,14 +303,20 @@ function selectOption(row) {
   row.classList.add('selected');
   selectedAnswer = row.getAttribute('data-value');
   document.getElementById('btn-answer').disabled = false;
+  // Brži tok: dodir na odgovor = odgovor (bez POTVRDI); kratko se vidi odabir
+  if (ONE_TAP_ANSWER) {
+    answerLocked = true;
+    var timeMs = Math.round(performance.now() - questionShownAt);
+    setTimeout(function() { answerLocked = false; confirmAnswer(timeMs); }, 150);
+  }
 }
 
-function confirmAnswer() {
+function confirmAnswer(tappedTimeMs) {
   if (!selectedAnswer || answerLocked) return;
   answerLocked = true;
   clearInactivityTimer();
-  // Vrijeme = od prikaza pitanja do klika na POTVRDI
-  var timeMs = Math.round(performance.now() - questionShownAt);
+  // Vrijeme = od prikaza pitanja do odgovora (dodir na odgovor ili POTVRDI)
+  var timeMs = typeof tappedTimeMs === 'number' ? tappedTimeMs : Math.round(performance.now() - questionShownAt);
   var correct = selectedAnswer === CORRECT_ANSWER;
   document.querySelectorAll('.option-row').forEach(function(r) {
     var v = r.getAttribute('data-value');
@@ -405,7 +413,7 @@ function showLeaderboard(entry, board) {
   } else {
     list.innerHTML = top.map(function(r, i) {
       var me = entry.is_correct && sameTime(r.created_at, entry.created_at);
-      return '<li class="lb-row' + (me ? ' lb-me' : '') + '" style="animation-delay:' + (0.3 + i * 0.12) + 's">' +
+      return '<li class="lb-row' + (me ? ' lb-me' : '') + '" style="animation-delay:' + (0.1 + i * 0.06) + 's">' +
         '<span class="lb-rank">' + (i + 1) + '</span>' +
         '<span class="lb-name">' + escapeHtml(r.short_name) + '</span>' +
         '<span class="lb-time">' + formatTime(r.time_ms) + '</span></li>';
@@ -635,4 +643,6 @@ requestWakeLock();
 document.addEventListener('visibilitychange', function() { if (document.visibilityState === 'visible') requestWakeLock(); });
 
 // ===== START =====
+// Odgovor jednim dodirom -> gumb POTVRDI ne treba
+if (ONE_TAP_ANSWER) document.getElementById('btn-answer').style.display = 'none';
 goToStart();

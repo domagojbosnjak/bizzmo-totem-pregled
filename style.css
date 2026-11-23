@@ -135,7 +135,7 @@ html, body {
 /* ===== SLAJD 1: PODACI ===== */
 .registration-content {
   gap: 70px;
-  transition: transform 0.6s var(--ease-subtle);
+  transition: transform 0.35s var(--ease-subtle);
 }
 /* Kad je tipkovnica otvorena, cijeli blok se podigne da polja ostanu vidljiva */
 .kb-open .registration-content { transform: translateY(-230px); }
@@ -148,7 +148,7 @@ html, body {
   font-weight: 800;
   line-height: 1.02;
 }
-.screen.active .reg-heading { animation: fly-in-settle 1.5s var(--ease-subtle) both; }
+.screen.active .reg-heading { animation: fly-in-settle 0.8s var(--ease-subtle) both; }
 
 .reg-subtitle {
   font-size: 40px;
@@ -156,10 +156,10 @@ html, body {
   line-height: 1.35;
   color: rgba(255,255,255,0.95);
 }
-.screen.active .reg-subtitle { animation: fly-in-settle 1.5s var(--ease-subtle) both; animation-delay: 0.35s; }
+.screen.active .reg-subtitle { animation: fly-in-settle 0.8s var(--ease-subtle) both; animation-delay: 0.12s; }
 
 .reg-fields { display: flex; flex-direction: column; gap: 56px; }
-.screen.active .reg-fields { animation: rise-in 1s var(--ease-expressive) both; animation-delay: 0.2s; }
+.screen.active .reg-fields { animation: rise-in 0.6s var(--ease-expressive) both; animation-delay: 0.1s; }
 
 .reg-field { display: flex; flex-direction: column; gap: 14px; position: relative; }
 
@@ -238,7 +238,7 @@ html, body {
   font-weight: 800;
   line-height: 1.08;
 }
-.screen.active .question-title { animation: fly-in-settle 1.5s var(--ease-subtle) both; }
+.screen.active .question-title { animation: fly-in-settle 0.8s var(--ease-subtle) both; }
 
 .options-list { display: flex; flex-direction: column; gap: 36px; }
 
@@ -253,10 +253,10 @@ html, body {
   cursor: pointer;
   transition: background 0.25s ease, color 0.25s ease, opacity 0.4s ease, outline-color 0.25s ease;
 }
-.screen.active .option-row { animation: rise-in 1s var(--ease-expressive) both; }
-.screen.active .option-row:nth-child(1) { animation-delay: 0.25s; }
-.screen.active .option-row:nth-child(2) { animation-delay: 0.4s; }
-.screen.active .option-row:nth-child(3) { animation-delay: 0.55s; }
+.screen.active .option-row { animation: rise-in 0.6s var(--ease-expressive) both; }
+.screen.active .option-row:nth-child(1) { animation-delay: 0.1s; }
+.screen.active .option-row:nth-child(2) { animation-delay: 0.17s; }
+.screen.active .option-row:nth-child(3) { animation-delay: 0.24s; }
 
 .option-letter {
   width: 88px;
@@ -370,7 +370,7 @@ html, body {
   font-weight: 800;
   line-height: 1.02;
 }
-.screen.active .result-title { animation: fly-in-settle 1.5s var(--ease-subtle) both; }
+.screen.active .result-title { animation: fly-in-settle 0.8s var(--ease-subtle) both; }
 .result-text {
   font-size: 42px;
   font-weight: 700;
@@ -378,7 +378,7 @@ html, body {
   color: rgba(255,255,255,0.95);
 }
 .result-text b { font-family: var(--font-heading); font-weight: 800; }
-.screen.active .result-text { animation: fly-in-settle 1.5s var(--ease-subtle) both; animation-delay: 0.35s; }
+.screen.active .result-text { animation: fly-in-settle 0.8s var(--ease-subtle) both; animation-delay: 0.12s; }
 
 .lb { display: flex; flex-direction: column; gap: 30px; }
 .lb-title {
@@ -398,7 +398,7 @@ html, body {
   font-size: 40px;
   font-weight: 700;
 }
-.screen.active .lb-row { animation: rise-in 1s var(--ease-expressive) both; }
+.screen.active .lb-row { animation: rise-in 0.6s var(--ease-expressive) both; }
 .lb-rank {
   width: 64px;
   font-family: var(--font-heading);
@@ -421,7 +421,7 @@ html, body {
 .lb-own b { font-family: var(--font-heading); font-weight: 800; }
 
 .btn-new-player { align-self: stretch; padding: 38px 64px; font-size: 38px; }
-.screen.active .btn-new-player { animation: rise-in 1s var(--ease-expressive) both; animation-delay: 1s; }
+.screen.active .btn-new-player { animation: rise-in 0.6s var(--ease-expressive) both; animation-delay: 0.4s; }
 
 /* ===== TIPKOVNICA ===== */
 .keyboard {
@@ -437,7 +437,7 @@ html, body {
   gap: 12px;
   z-index: 1000;
   transform: translateY(105%);
-  transition: transform 0.35s var(--ease-subtle);
+  transition: transform 0.25s var(--ease-subtle);
 }
 .keyboard.visible { transform: translateY(0); }
 .keyboard-row { display: flex; justify-content: center; gap: 9px; }
