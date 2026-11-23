@@ -347,20 +347,18 @@ html.frame-mode #attract-layer {
 }
 
 /* ===== POZIV NA DODIR preko videa =====
-   Veličine u cqw/cqh (postotak sloja s videom), pa izgleda isto na totemu,
-   računalu i mobitelu. Blagi tamni prijelaz na dnu da gumb bude čitljiv. */
+   Stoji ispod "AI asistent" loga u videu, u traci koja je prazna kroz cijeli
+   video (redovi ~135-295 od 1920, provjereno svakih 0,5 s). Gumb je visok
+   ~115 px i počinje na 155 px. top = max(cqw, cqh) prati video i kad
+   prozor nije točno 9:16 (video je tada poravnat uz vrh). */
 #attract-layer { container-type: size; }
 .tap-hint {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 0;
-  height: 22cqh;
+  top: max(14.35cqw, 8.07cqh);
   display: flex;
-  align-items: flex-end;
   justify-content: center;
-  padding-bottom: 5.5cqh;
-  background: linear-gradient(to bottom, rgba(0,35,80,0) 0%, rgba(0,35,80,0.55) 100%);
   pointer-events: none;
 }
 html.tap-hint-off .tap-hint { display: none; }
